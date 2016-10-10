@@ -50,7 +50,7 @@
                                         <td>
                                             {% if key == 'Reference' %}
                                                 {% if result['Url'] != 'none' %}
-                                                    <a target="_blank" href="{{ result['Url']}}">
+                                                    <a target="_blank" href="{{ result['Url'] }}">
                                                         {{ result[key] }}
                                                     </a>
                                                 {% else %}
