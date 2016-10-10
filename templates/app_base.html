@@ -19,27 +19,25 @@ see http://jinja.pocoo.org/docs/templates/#template-inheritance for more informa
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
         <script>
         $(document).ready(function() {
-            $('#catapp_results').DataTable(
-                {
-                    dom: 'Bfrtip',
-                    buttons: [
-                        'copyHtml5',
-                        'excelHtml5',
-                        'csvHtml5',
-                        //'pdfHtml5'
-                        ]
-                }
-            );
+            $('#catapp_results').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    //'pdfHtml5'
+                ]
+            });
         });
         </script>
         <style>
         body {
-        /* font-family: Helvetica, Arial, sans-serif; */
-        font-family: 'Roboto', sans-serif;
-        font-size: 16px;
-        line-height: 1.5;
-        font-weight: 300;
-        background-color: #fdfdfd;
+            /* font-family: Helvetica, Arial, sans-serif; */
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            font-weight: 300;
+            background-color: #fdfdfd;
         }
         h2, h4, h5, h6 { font-size: 100%; font-weight: 400; }
         a         { color: #2a7ae2; text-decoration: none; }

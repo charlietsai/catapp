@@ -1,5 +1,7 @@
-import web
 import json
+import textwrap
+
+import web
 from numpy import polyfit, min, max
 
 DATABASE = web.database(dbn='sqlite', db='catapp.db')
@@ -78,6 +80,9 @@ def getUniqueRxns():
     return query("SELECT DISTINCT AB, A, B FROM CatAPP ORDER BY AB")
 
 
+LINE_WRAP = 25
+
+
 def getScalingXY(X_rxn, Y_rxn, outTypeX, outTypeY):
     """Get results for plotting scaling relations
 
@@ -90,27 +95,34 @@ def getScalingXY(X_rxn, Y_rxn, outTypeX, outTypeY):
     Returns:
         TYPE: Description
     """
-    Xab = X_rxn.split("|")[0]
-    Xa = X_rxn.split("|")[1]
-    Xb = X_rxn.split("|")[2]
-    xLabel = "{} \u2192 {} {} (eV)".format(Xab, Xa, Xb)
+    Xab = X_rxn.split('|')[0]
+    Xa = X_rxn.split('|')[1]
+    Xb = X_rxn.split('|')[2]
+    xLabel = '{} \u2192 {} {} (eV)'.format(Xab, Xa, Xb)
 
     if X_rxn == Y_rxn:
         rawData = query(
             """
-            SELECT {}, {}, Surface, Termination FROM CatApp 
-            WHERE AB = '{}' and A = '{}' and B = '{}'
-            AND {} <> '' AND {} <> ''
+            SELECT {}, {}, Surface,
+               Termination,
+               Reference,
+               Url
+            FROM CatApp
+            WHERE AB = '{}'
+              AND A = '{}'
+              AND B = '{}'
+              AND {} <> ''
+              AND {} <> ''
             """.format(outTypeX, outTypeY, Xab, Xa, Xb, outTypeX, outTypeY)
         )
         yLabel = xLabel
         xData = [float(d[outTypeX]) for d in rawData]
         yData = [float(d[outTypeY]) for d in rawData]
     else:
-        Yab = Y_rxn.split("|")[0]
-        Ya = Y_rxn.split("|")[1]
-        Yb = Y_rxn.split("|")[2]
-        yLabel = "{} \u2192 {} {} (eV)".format(Yab, Ya, Yb)
+        Yab = Y_rxn.split('|')[0]
+        Ya = Y_rxn.split('|')[1]
+        Yb = Y_rxn.split('|')[2]
+        yLabel = '{} \u2192 {} {} (eV)'.format(Yab, Ya, Yb)
 
         rawData = query(
             """
@@ -118,10 +130,15 @@ def getScalingXY(X_rxn, Y_rxn, outTypeX, outTypeY):
                 a.{outTypeX} as a_{outTypeX},
                 b.{outTypeY} as b_{outTypeY},
                 a.Surface as Surface,
-                a.Termination as Termination
+                a.Termination as Termination,
+                a.Reference as a_Reference,
+                a.Url as a_Url,
+                b.Reference as b_Reference,
+                b.Url as b_Url
             FROM CatApp AS a
             INNER JOIN (
-                SELECT  {outTypeY}, Surface, Termination, AB, A, B FROM CatApp
+                SELECT  {outTypeY}, Surface, Termination, Reference, Url, AB, A, B
+                FROM CatApp
             ) AS b
             ON (
                 (a.AB = '{Xab}' and a.A = '{Xa}' and a.B = '{Xb}')
@@ -147,27 +164,37 @@ def getScalingXY(X_rxn, Y_rxn, outTypeX, outTypeY):
                        Yb=Yb)
         )
 
-        xData = [float(d['a_' + outTypeX]) for d in rawData]
-        yData = [float(d['b_' + outTypeY]) for d in rawData]
+        xData = [float(d['a_{}'.format(outTypeX)]) for d in rawData]
+        yData = [float(d['b_{}'.format(outTypeY)]) for d in rawData]
 
     for d in rawData:
         if d['Termination'] == '1':
             d['Termination'] = '0001'
 
-    dataLabels = ["{}({})".format(d['Surface'], d['Termination']) for d in rawData]
+    if 'Reference' in d.keys():
+        refString = '<br>'.join(textwrap.wrap(d['Reference'], LINE_WRAP))
+    else:
+        refStringA = 'X. {}'.format('<br>'.join(textwrap.wrap(d['a_Reference'], LINE_WRAP)))
+        refStringB = 'Y. {}'.format('<br>'.join(textwrap.wrap(d['b_Reference'], LINE_WRAP)))
+        refString = '<br>'.join((refStringA, refStringB))
+
+    dataLabels = ['{}({}) <br><br>References:<br>{}'.format(d['Surface'],
+                                                            d['Termination'],
+                                                            refString)
+                  for d in rawData]
 
     if len(xData) > 1:
         m, b = polyfit(xData, yData, 1)
         if b > 0:
-            b_new = "+ {:.2f}".format(b)
+            b_new = '+ {:.2f}'.format(b)
         else:
-            b_new = " \u2013 {:.2f}".format(abs(b))
+            b_new = ' \u2013 {:.2f}'.format(abs(b))
         if m > 0:
-            m_new = "{:.2f}".format(m)
+            m_new = '{:.2f}'.format(m)
         else:
-            m_new = " \u2013 {:.2f}".format(abs(m))
+            m_new = ' \u2013 {:.2f}'.format(abs(m))
 
-        fitLabel = "Y = {} X {}".format(m_new, b_new)
+        fitLabel = 'Y = {} X {}'.format(m_new, b_new)
         fit_xmin = min(xData)
         fit_xmax = max(xData)
         xFit = [fit_xmin, fit_xmax]

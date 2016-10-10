@@ -115,10 +115,10 @@ class plot(object):
         """
         uniqueRxns = sqlitedb.getUniqueRxns()
         #X =  "NH3*|NH3|*"
-        X = "N2|N*|N*"
-        Y = "N2|N*|N*"
-        defaultOutX = "Reaction_Energy"
-        defaultOutY = "Activation_Energy"
+        X = 'N2|N*|N*'
+        Y = 'N2|N*|N*'
+        defaultOutX = 'Reaction_Energy'
+        defaultOutY = 'Activation_Energy'
         xData, yData, xLabel, yLabel, dataLabels, fitLabel, xFit, yFit = sqlitedb.getScalingXY(
             X, Y, defaultOutX, defaultOutY
         )
