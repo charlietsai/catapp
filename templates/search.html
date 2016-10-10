@@ -1,0 +1,72 @@
+{% extends "app_base.html" %}
+{% block content %}
+    <STYLE TYPE="text/css">
+    th {font-size: 10pt;}
+    td {font-size: 10pt;}
+    sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline;}
+    sup { top: -0.5em;}
+    sub { bottom: -0.25em;}
+    </STYLE>
+    <center>
+    <div class="container center_div">
+        <form method="POST" action="search" role="form" style="max-width:800px; width:100%" class="form-default">
+            <center>
+            <h3>Search the CatApp Database</h3>
+            <br>
+            <div class="input-group" style="max-width:700px" >
+                <input type="text" name = "query" class="form-control" id="query" placeholder="Species, catalysts, functionals, authors... Use * for partial text matches (e.g. *Pt*)"/>
+                <span class="input-group-btn">
+                    <button class="btn btn-info" type="submit" value="search">Search</button>
+                </span>
+            </div>
+            </center>
+            <br>
+            <!-- <table class="table table-bordered" style="max-width:800px; width:100%" > -->
+            <!-- <table id="catapp_results"  class="ui celled table" cellspacing="0" width="100%"> -->
+            {% if search_result %}
+                {% if search_result != 'empty' %}
+                    <center>
+                    <h4>Results for "{{ search_query }}" (Found {{ search_result|length }} items)</h4>
+                    <table id="catapp_results" class="table table-bordered table-hover" style="max-width:600px; width:100%">
+                        <thead>
+                            <tr>
+                                {% for key in key_order %}
+                                    <th><p>{{ key|e|replace("_", " ")|replace("Energy","Energy (eV)")}}</p></th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in search_result %}
+                                <tr>
+                                    {% for key in key_order %}
+                                        <td>
+                                            {% if key == 'Reference' %}
+                                                {% if result['Url'] != 'none' %}
+                                                    <a target="_blank" href="{{ result['Url']}}">{{ result[key] }}</a>
+                                                {% else %}
+                                                    {{ result[key] }}
+                                                {% endif %}
+                                                {% elif key in ['AB','A','B'] %}
+                                                {{ result[key]|e|replace("hf", "1/2 ") }}
+                                                {% elif key == 'Termination' and result[key] == '1' %}
+                                                <!-- HACK: should move this logic to the python code -->
+                                                {{ result[key]|e|replace("1", "0001") }}
+                                            {% else %}
+                                                {{ result[key]}}
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    </center>
+                {% else  %}
+                    <center><h4>No results</h4></center>
+                </div>
+            </div>
+        </form>
+        </center>
+    {% endif %}
+{% endif %}
+{% endblock %}

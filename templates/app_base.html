@@ -1,0 +1,84 @@
+{# base template that other templates can build from. Specifies the title for the
+page and a navigation bar at the top
+see http://jinja.pocoo.org/docs/templates/#template-inheritance for more information #}
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <title>CatApp</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css">
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.11/js/dataTables.bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.1.2/css/buttons.dataTables.min.css">
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.1.2/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="//cdn.datatables.net/buttons/1.1.2/js/buttons.html5.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+        <script>
+        $(document).ready(function() {
+            $('#catapp_results').DataTable(
+                {
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'copyHtml5',
+                        'excelHtml5',
+                        'csvHtml5',
+                        //'pdfHtml5'
+                        ]
+                }
+            );
+        });
+        </script>
+        <style>
+        body {
+        /* font-family: Helvetica, Arial, sans-serif; */
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        font-weight: 300;
+        background-color: #fdfdfd;
+        }
+        h2, h4, h5, h6 { font-size: 100%; font-weight: 400; }
+        a         { color: #2a7ae2; text-decoration: none; }
+        a:hover   { color: #000; text-decoration: underline; }
+        a:visited { color: #205caa; }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">CatApp</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="search">Search</a></li>
+                        <li><a href="plot">ScalingRelations</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="http://suncat.slac.stanford.edu" target="_blank">SUNCAT</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        {# specify content block so that other templates can use this template as a base #}
+        <center>
+        <div class="panel-body" style="padding:0 10% 20px 10%">
+            <div id="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+        </center>
+    </div>
+</body>
+</html>

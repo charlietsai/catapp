@@ -1,0 +1,138 @@
+{% extends "app_base.html" %}
+{% block content %}
+    <head>
+        <script src="../includes/plotly-latest.min.js"></script>
+    </head>
+    <div class="container center_div">
+        <center>
+        <h3>Scaling Relations Plotter</h3>
+        <br>
+        <div id="scalePlot" style="width:500px;height:400px;"></div>
+        {% if Xdata and Ydata %}
+            <script>
+            var linecolor = 'rgba(0, 0, 0, 0.2)';
+            var zerolinecolor = 'rgba(0, 0, 0, 0.4)';
+            scalingPlot = document.getElementById('scalePlot');
+            Plotly.plot( scalingPlot, [
+            {
+            x: {{ Xfit|safe }},
+            y: {{ Yfit|safe }},
+            // name: 'Linear Fit',
+            name: '{{ fit_label }}',
+            mode: 'lines',
+            // marker: {color:'grey'}
+            marker: {color:'rgba(0, 0, 0, 0.25)'}
+            },
+            {
+            x: {{ Xdata|safe }},
+            y: {{ Ydata|safe }},
+            showlegend: false,
+            type: 'scatter',
+            name: '',
+            text: {{ dataLabels|safe }},
+            mode: 'markers',
+            marker: {color:'rgba(91, 191, 224, 1.0)'}
+            }
+            ],
+            {
+            // title: '{{ fit_label }}',
+            xaxis: {
+            title: 'E'.italics()+'{{ outTypeX.split("_")[0] }}'.sub()+'  {{ Xlab|e|replace("hf", "\xBD ") }}',
+            showline: true,
+            zerolinecolor: zerolinecolor,
+            linecolor: linecolor,
+            tickcolor: linecolor,
+            mirror: 'allticks',
+            ticks: 'inside',
+            },
+            yaxis: {
+            title: 'E'.italics()+'{{ outTypeY.split("_")[0] }}'.sub()+'  {{ Ylab|e|replace("hf", "\xBD ") }}',
+            showline: true,
+            zerolinecolor: zerolinecolor,
+            linecolor: linecolor,
+            tickcolor: linecolor,
+            mirror: 'allticks',
+            ticks: 'inside',
+            },
+            legend: {xanchor:"center", yanchor:"top", x:0.5, y:1.12},
+            margin: {t: 10},
+            hovermode: 'closest'
+            } );
+            </script>
+        {% endif %}
+        </center>
+        <script>
+        var filterDay = $('#outType input:radio:checked').val()
+        </script>
+        <center>
+        <form method="POST" action="plot" role="form" style="max-width:300px; width:100%" class="form-group">
+            <div class="form-group">
+                <label for="X">X descriptor</label>
+                <select size="1" name="X" class="form-control" id="X">
+                    {% for rxn in reactions[:-1] %}
+                        {% if rxn['AB']+"|"+rxn['A']+"|"+rxn['B'] == X_select %}
+                            <option value="{{ rxn['AB'] }}|{{ rxn['A'] }}|{{ rxn['B'] }}" selected="selected">
+                        {% else %}
+                            <option value="{{ rxn['AB'] }}|{{ rxn['A'] }}|{{ rxn['B'] }}">
+                        {% endif %}
+                        {{ rxn['AB']|e|replace("hf", "1/2 ") }} &rarr; {{ rxn['A']|e|replace("hf", "1/2 ") }} + {{ rxn['B']|e|replace("hf", "1/2 ") }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <div class="form-group" id="outType" data-toggle="buttons">
+                    <label class="radio-inline">
+                        {% if outTypeX == "Reaction_Energy" %}
+                            <input type="radio" name="outTypeX" value="Reaction_Energy" checked="">
+                        {% else %}
+                            <input type="radio" name="outTypeX" value="Reaction_Energy">
+                        {% endif %}
+                    Reaction Energy</label>
+                    <label class="radio-inline">
+                        {% if outTypeX == "Activation_Energy" %}
+                            <input type="radio" name="outTypeX" value="Activation_Energy" checked="">
+                        {% else %}
+                            <input type="radio" name="outTypeX" value="Activation_Energy">
+                        {% endif %}
+                    Activation Energy</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Y">Y descriptor</label>
+                <select size="1" name="Y" class="form-control" id="Y">
+                    {% for rxn in reactions[:-1] %}
+                        {% if rxn['AB']+"|"+rxn['A']+"|"+rxn['B'] == Y_select %}
+                            <option value="{{ rxn['AB'] }}|{{ rxn['A'] }}|{{ rxn['B'] }}" selected="selected">
+                            {% else %}
+                                <option value="{{ rxn['AB'] }}|{{ rxn['A'] }}|{{ rxn['B'] }}">
+                                {% endif %}
+                                {{ rxn['AB']|e|replace("hf", "1/2 ") }} &rarr; {{ rxn['A']|e|replace("hf", "1/2 ") }} + {{ rxn['B']|e|replace("hf", "1/2 ") }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <div class="form-group" id="outType" data-toggle="buttons">
+                    <label class="radio-inline">
+                        {% if outTypeY == "Reaction_Energy" %}
+                            <input type="radio" name="outTypeY" value="Reaction_Energy" checked="">
+                        {% else %}
+                            <input type="radio" name="outTypeY" value="Reaction_Energy">
+                        {% endif %}
+                        Reaction Energy
+                    </label>
+                    <label class="radio-inline">
+                        {% if outTypeY == "Activation_Energy" %}
+                            <input type="radio" name="outTypeY" value="Activation_Energy" checked="">
+                        {% else %}
+                            <input type="radio" name="outTypeY" value="Activation_Energy">
+                        {% endif %}
+                        Activation Energy
+                    </label>
+                </div>
+            </div>
+            <center>
+            <input type="submit" value="Plot" class="btn btn-info" />
+            </center>
+        </div>
+    </form>
+    </center>
+{% endblock %}
