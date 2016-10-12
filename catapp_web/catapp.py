@@ -7,8 +7,9 @@ import os
 from datetime import datetime
 
 import web
-import sqlitedb
 import jinja2
+
+import catapp_web.sqlitedb
 
 """
 HELPER FUNCTIONS
@@ -21,7 +22,7 @@ def string_to_time(date_str):
     ==, !=, <, >, etc.) instead of lexicographically as strings.
 
     Sample use:
-    current_time = string_to_time(sqlitedb.getTime())
+    current_time = string_to_time(catapp_web.sqlitedb.getTime())
 
     Args:
         date_str (str)
@@ -93,7 +94,7 @@ class search(object):
         key_order = ('Reaction_Energy', 'Activation_Energy', 'Surface',
                      'Termination', 'AB', 'A', 'B', 'Reference', 'Source')
         post_params = web.input()
-        result = sqlitedb.getRxn(post_params['query'])
+        result = catapp_web.sqlitedb.getRxn(post_params['query'])
         if result:
             return render_template('search.html',
                                    search_result=result,
@@ -113,13 +114,13 @@ class plot(object):
         Returns:
             render Jinja2 template
         """
-        uniqueRxns = sqlitedb.getUniqueRxns()
+        uniqueRxns = catapp_web.sqlitedb.getUniqueRxns()
         #X =  "NH3*|NH3|*"
         X = 'N2|N*|N*'
         Y = 'N2|N*|N*'
         defaultOutX = 'Reaction_Energy'
         defaultOutY = 'Activation_Energy'
-        xData, yData, xLabel, yLabel, dataLabels, fitLabel, xFit, yFit = sqlitedb.getScalingXY(
+        xData, yData, xLabel, yLabel, dataLabels, fitLabel, xFit, yFit = catapp_web.sqlitedb.getScalingXY(
             X, Y, defaultOutX, defaultOutY
         )
         return render_template('plot.html',
@@ -145,13 +146,14 @@ class plot(object):
         Returns:
             render Jinja2 template
         """
-        uniqueRxns = sqlitedb.getUniqueRxns()
+        uniqueRxns = catapp_web.sqlitedb.getUniqueRxns()
         post_params = web.input()
-        xData, yData, xLabel, yLabel, dataLabels, fitLabel, xFit, yFit = sqlitedb.getScalingXY(
+        xData, yData, xLabel, yLabel, dataLabels, fitLabel, xFit, yFit = catapp_web.sqlitedb.getScalingXY(
             post_params['X'],
             post_params['Y'],
             post_params['outTypeX'],
-            post_params['outTypeY'])
+            post_params['outTypeY']
+        )
         return render_template('plot.html',
                                X_select=post_params['X'],
                                Y_select=post_params['Y'],
@@ -170,5 +172,5 @@ class plot(object):
 if __name__ == '__main__':
     web.internalerror = web.debugerror
     app = web.application(URLS, globals())
-    # app.add_processor(web.loadhook(sqlitedb.enforceForeignKey))
+    # app.add_processor(web.loadhook(catapp_web.sqlitedb.enforceForeignKey))
     app.run()

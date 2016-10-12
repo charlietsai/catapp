@@ -1,3 +1,3 @@
 CatApp
 ======
-The **Cat**alysis Web **App** is an searchable online database for heterogeneous catalysis.
+The **Cat**alysis Web **App** is a searchable online database for heterogeneous catalysis.
