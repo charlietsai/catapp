@@ -92,7 +92,7 @@ class search(object):
             render Jinja2 template
         """
         key_order = ('Reaction_Energy', 'Activation_Energy', 'Surface',
-                     'Termination', 'AB', 'A', 'B', 'Reference', 'Source')
+                     'Termination', 'AB', 'A', 'B', 'Reference', 'SOURCE')
         post_params = web.input()
         result = catapp_web.sqlitedb.getRxn(post_params['query'])
         if result:

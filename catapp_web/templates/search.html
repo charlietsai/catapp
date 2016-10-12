@@ -37,7 +37,7 @@
                                 {% for key in key_order %}
                                     <th>
                                         <p>
-                                            {{ key|e|replace("_", " ")|replace("Energy","Energy (eV)")}}
+                                            {{ key|e|replace("_", " ")|replace("Energy","Energy (eV)")|title}}
                                         </p>
                                     </th>
                                 {% endfor %}
@@ -56,13 +56,13 @@
                                                 {% else %}
                                                     {{ result[key] }}
                                                 {% endif %}
-                                                {% elif key in ['AB','A','B'] %}
-                                                {{ result[key]|e|replace("hf", "1/2 ") }}
-                                                {% elif key == 'Termination' and result[key] == '1' %}
+                                            {% elif key in ['AB','A','B'] %}
+                                                    {{ result[key]|e|replace("hf", "\xBD ") }}
+                                            {% elif key == 'Termination' and result[key] == '1' %}
                                                 <!-- HACK: should move this logic to the python code -->
                                                 {{ result[key]|e|replace("1", "0001") }}
                                             {% else %}
-                                                {{ result[key]}}
+                                                {{ result[key] }}
                                             {% endif %}
                                         </td>
                                     {% endfor %}

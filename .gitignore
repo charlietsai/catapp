@@ -1,3 +1,5 @@
 scratch/
+static/
 lib/
 *pyc
+make_db/
