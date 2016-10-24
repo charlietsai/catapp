@@ -9,68 +9,20 @@
         <br>
         <div id="scalePlot" style="width:500px;height:400px;"></div>
         {% if Xdata and Ydata %}
+            <script src="./static/js/makePlot.js"></script>
             <script>
-            var linecolor = 'rgba(0, 0, 0, 0.2)';
-            var zerolinecolor = 'rgba(0, 0, 0, 0.4)';
-            scalingPlot = document.getElementById('scalePlot');
-            Plotly.plot(scalingPlot, [{
-                            x: {{ Xfit|safe }},
-                            y: {{ Yfit|safe }},
-                            // name: 'Linear Fit',
-                            name: '{{ fitLabel }}',
-                            mode: 'lines',
-                            // marker: {color:'grey'}
-                            marker: {
-                                color: 'rgba(0, 0, 0, 0.25)'
-                            }
-                        }, {
-                x: {{ Xdata|safe }},
-                y: {{ Ydata|safe }},
-                showlegend: false,
-                    type: 'scatter',
-                    name: '',
-                text: {{ dataLabels|safe }},
-                mode: 'markers',
-                    marker: {
-                        color: 'rgba(91, 191, 224, 1.0)'
-                    }
-                }
-                ], {
-                    // title: '{{ fit_label }}',
-                    xaxis: {
-                        title: 'E'.italics() + '{{ outTypeX.split("_")[0] }}'.sub() + '  {{ Xlab|e|replace("hf", "\xBD ") }}',
-                        showline: true,
-                        zerolinecolor: zerolinecolor,
-                        linecolor: linecolor,
-                        tickcolor: linecolor,
-                        mirror: 'allticks',
-                        ticks: 'inside',
-                    },
-                    yaxis: {
-                        title: 'E'.italics() + '{{ outTypeY.split("_")[0] }}'.sub() + '  {{ Ylab|e|replace("hf", "\xBD ") }}',
-                        showline: true,
-                        zerolinecolor: zerolinecolor,
-                        linecolor: linecolor,
-                        tickcolor: linecolor,
-                        mirror: 'allticks',
-                        ticks: 'inside',
-                    },
-                    legend: {
-                        xanchor: "center",
-                        yanchor: "top",
-                        x: 0.5,
-                        y: 1.12
-                    },
-                    margin: {
-                        t: 10
-                    },
-                    hovermode: 'closest'
-            });
+                makeScalingPlot('scalePlot',
+                    '{{ fitLabel }}', {{ Xfit|safe }}, {{ Yfit|safe }},
+                    {{ Xdata|safe }}, {{ Ydata|safe }},
+                    '  {{ Xlab|e|replace("hf", "\xBD ") }}', '  {{ Ylab|e|replace("hf", "\xBD ") }}',
+                    '{{ outTypeX.split("_")[0] }}', '{{ outTypeY.split("_")[0] }}',
+                    {{ dataLabels|safe }}
+                )
             </script>
         {% endif %}
         </center>
         <script>
-        var filterDay = $('#outType input:radio:checked').val()
+            var filterDay = $('#outType input:radio:checked').val()
         </script>
         <center>
         <form method="POST" action="plot" role="form" style="max-width:300px; width:100%" class="form-group">
