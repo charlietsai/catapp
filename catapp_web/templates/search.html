@@ -37,7 +37,11 @@
                                 {% for key in key_order %}
                                     <th>
                                         <p>
-                                            {{ key|e|replace("_", " ")|replace("Energy","Energy (eV)")|title}}
+                                        {% if key == 'SOURCE' %}
+                                            {{ key|title }}
+                                        {% else %}
+                                            {{ key|e|replace("_", " ")|replace("Energy","Energy (eV)")}}
+                                        {% endif %}
                                         </p>
                                     </th>
                                 {% endfor %}
