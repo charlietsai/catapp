@@ -9,7 +9,7 @@
         <br>
         <div id="scalePlot" style="width:500px;height:400px;"></div>
         {% if Xdata and Ydata %}
-            <script src="./static/js/makePlot.js"></script>
+            <script src="../static/js/makePlot.js"></script>
             <script>
                 makeScalingPlot('scalePlot',
                     '{{ fitLabel }}', {{ Xfit|safe }}, {{ Yfit|safe }},
@@ -46,14 +46,16 @@
                         {% else %}
                             <input type="radio" name="outTypeX" value="Reaction_Energy">
                         {% endif %}
-                    Reaction Energy</label>
+                        Reaction Energy
+                    </label>
                     <label class="radio-inline">
                         {% if outTypeX == "Activation_Energy" %}
                             <input type="radio" name="outTypeX" value="Activation_Energy" checked="">
                         {% else %}
                             <input type="radio" name="outTypeX" value="Activation_Energy">
                         {% endif %}
-                    Activation Energy</label>
+                        Activation Energy
+                    </label>
                 </div>
             </div>
             <div class="form-group">
