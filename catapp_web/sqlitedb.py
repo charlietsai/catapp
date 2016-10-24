@@ -7,7 +7,8 @@ import textwrap
 import web
 import numpy as np
 
-DATABASE = web.database(dbn='sqlite', db='catapp.db')
+SEARCH_DB = web.database(dbn='sqlite', db='database/catapp.db')
+PLOT_DB = web.database(dbn='sqlite', db='database/catapp_index.db')
 TOOL_TIP_LINE_WRAP = 25
 
 """
@@ -17,7 +18,7 @@ HELPER METHODS
 
 def enforceForeignKey():
     """Enforce foreign key constraints"""
-    DATABASE.query('PRAGMA foreign_keys = ON')
+    SEARCH_DB.query('PRAGMA foreign_keys = ON')
 
 
 def transaction():
@@ -40,10 +41,10 @@ def transaction():
     wrapper method around web.py's db.query method
     check out http://webpy.org/cookbook/query for more info
     """
-    return DATABASE.transaction()
+    return SEARCH_DB.transaction()
 
 
-def query(query_string, vars=None):
+def query(query_string, database=None, vars=None):
     """returns results from database query as a list
 
     Note: if the `result' list is empty (i.e. there are no items for a
@@ -51,13 +52,16 @@ def query(query_string, vars=None):
 
     Args:
         query_string (str)
+        database (str, optional)
+        vars (None, optional): Description
         vars (dict, optional)
 
     Returns:
         list
     """
     vars = {} if vars == None else vars
-    return list(DATABASE.query(query_string, vars))
+    database = SEARCH_DB if database is None else database
+    return list(database.query(query_string, vars))
 
 
 def getRxn(search_query):
@@ -141,7 +145,8 @@ def getRawScalingData(xRxn, yRxn, outTypeX, outTypeY):
               AND B = '{}'
               AND {} <> ''
               AND {} <> ''
-            """.format(outTypeX, outTypeY, Xab, Xa, Xb, outTypeX, outTypeY)
+            """.format(outTypeX, outTypeY, Xab, Xa, Xb, outTypeX, outTypeY),
+            database=PLOT_DB,
         )
     else:
         rawData = query(
@@ -176,7 +181,8 @@ def getRawScalingData(xRxn, yRxn, outTypeX, outTypeY):
             AND b.{outTypeY} <> ''
             """.format(outTypeX=outTypeX, outTypeY=outTypeY,
                        Xab=Xab, Xa=Xa, Xb=Xb,
-                       Yab=Yab, Ya=Ya, Yb=Yb)
+                       Yab=Yab, Ya=Ya, Yb=Yb),
+            database=PLOT_DB,
         )
 
     return rawData
